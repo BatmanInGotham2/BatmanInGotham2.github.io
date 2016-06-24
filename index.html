@@ -4,166 +4,217 @@
   <head>
 
     <title>My first website</title>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css">
-    <script type="text/javascript" src="/assets/js/paper.js"></script>
-<!-- Define inlined PaperScript associate it with myCanvas -->
-<script type="text/paperscript" canvas="myCanvas">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css">
 
-// kynd.info 2014
+    <script type="text/javascript" src="assets/js/paper.js"></script>
+    <!-- Define inlined PaperScript associate it with myCanvas -->
+  <script type="text/paperscript" canvas="myCanvas">    
+    // A tribute to Nyan Cat http://www.youtube.com/watch?v=QH2-TGUlwu4
+    var mediaElement;
+    var playing = false;
+    MediaElement('nyan', {
+      pluginPath: '/assets/mediaelement/',
+      success: function(me) {
+        mediaElement = me;
+        me.play();
+        me.addEventListener('timeupdate', function(time) {
+          if (me.currentTime > 3.7)
+            playing = true;
+        });
+      }
+    });
 
-function Ball(r, p, v) {
-  this.radius = r;
-  this.point = p;
-  this.vector = v;
-  this.maxVec = 15;
-  this.numSegment = Math.floor(r / 3 + 2);
-  this.boundOffset = [];
-  this.boundOffsetBuff = [];
-  this.sidePoints = [];
-  this.path = new Path({
-    fillColor: {
-      hue: Math.random() * 360,
-      saturation: 1,
-      brightness: 1
-    },
-    blendMode: 'lighter'
-  });
+    var mousePos = view.center + [view.bounds.width / 3, 100];
+    var position = view.center;
 
-  for (var i = 0; i < this.numSegment; i ++) {
-    this.boundOffset.push(this.radius);
-    this.boundOffsetBuff.push(this.radius);
-    this.path.add(new Point());
-    this.sidePoints.push(new Point({
-      angle: 360 / this.numSegment * i,
-      length: 1
-    }));
-  }
-}
-
-Ball.prototype = {
-  iterate: function() {
-    this.checkBorders();
-    if (this.vector.length > this.maxVec)
-      this.vector.length = this.maxVec;
-    this.point += this.vector;
-    this.updateShape();
-  },
-
-  checkBorders: function() {
-    var size = view.size;
-    if (this.point.x < -this.radius)
-      this.point.x = size.width + this.radius;
-    if (this.point.x > size.width + this.radius)
-      this.point.x = -this.radius;
-    if (this.point.y < -this.radius)
-      this.point.y = size.height + this.radius;
-    if (this.point.y > size.height + this.radius)
-      this.point.y = -this.radius;
-  },
-
-  updateShape: function() {
-    var segments = this.path.segments;
-    for (var i = 0; i < this.numSegment; i ++)
-      segments[i].point = this.getSidePoint(i);
-
-    this.path.smooth();
-    for (var i = 0; i < this.numSegment; i ++) {
-      if (this.boundOffset[i] < this.radius / 4)
-        this.boundOffset[i] = this.radius / 4;
-      var next = (i + 1) % this.numSegment;
-      var prev = (i > 0) ? i - 1 : this.numSegment - 1;
-      var offset = this.boundOffset[i];
-      offset += (this.radius - offset) / 15;
-      offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
-      this.boundOffsetBuff[i] = this.boundOffset[i] = offset;
+    function onFrame(event) {
+      position += (mousePos - position) / 10;
+      var vector = (view.center - position) / 10;
+      moveStars(vector * 3);
+      moveRainbow(vector, event);
     }
-  },
 
-  react: function(b) {
-    var dist = this.point.getDistance(b.point);
-    if (dist < this.radius + b.radius && dist != 0) {
-      var overlap = this.radius + b.radius - dist;
-      var direc = (this.point - b.point).normalize(overlap * 0.015);
-      this.vector += direc;
-      b.vector -= direc;
-
-      this.calcBounds(b);
-      b.calcBounds(this);
-      this.updateBounds();
-      b.updateBounds();
+    function onMouseMove(event) {
+      mousePos = event.point;
     }
-  },
 
-  getBoundOffset: function(b) {
-    var diff = this.point - b;
-    var angle = (diff.angle + 180) % 360;
-    return this.boundOffset[Math.floor(angle / 360 * this.boundOffset.length)];
-  },
+    function onKeyDown(event) {
+      if (event.key == 'space')
+        project.activeLayer.selected = !project.activeLayer.selected;
+    }
 
-  calcBounds: function(b) {
-    for (var i = 0; i < this.numSegment; i ++) {
-      var tp = this.getSidePoint(i);
-      var bLen = b.getBoundOffset(tp);
-      var td = tp.getDistance(b.point);
-      if (td < bLen) {
-        this.boundOffsetBuff[i] -= (bLen  - td) / 2;
+    var moveStars = new function() {
+      // The amount of symbol we want to place;
+      var count = 50;
+
+      // Create a symbol, which we will use to place instances of later:
+      var path = new Path.Circle({
+        center: [0, 0],
+        radius: 5,
+        fillColor: 'white',
+        strokeColor: 'black'
+      });
+
+      var symbol = new Symbol(path);
+
+      // Place the instances of the symbol:
+      for (var i = 0; i < count; i++) {
+        // The center position is a random point in the view:
+        var center = Point.random() * view.size;
+        var placed = symbol.place(center);
+        placed.scale(i / count + 0.01);
+        placed.data = {
+          vector: new Point({
+            angle: Math.random() * 360,
+            length : (i / count) * Math.random() / 5
+          })
+        };
+      }
+
+      var vector = new Point({
+        angle: 45,
+        length: 0
+      });
+
+      function keepInView(item) {
+        var position = item.position;
+        var viewBounds = view.bounds;
+        if (position.isInside(viewBounds))
+          return;
+        var itemBounds = item.bounds;
+        if (position.x > viewBounds.width + 5) {
+          position.x = -item.bounds.width;
+        }
+
+        if (position.x < -itemBounds.width - 5) {
+          position.x = viewBounds.width;
+        }
+
+        if (position.y > viewBounds.height + 5) {
+          position.y = -itemBounds.height;
+        }
+
+        if (position.y < -itemBounds.height - 5) {
+          position.y = viewBounds.height
+        }
+      }
+
+      return function(vector) {
+        // Run through the active layer's children list and change
+        // the position of the placed symbols:
+        var layer = project.activeLayer;
+        for (var i = 0; i < count; i++) {
+          var item = layer.children[i];
+          var size = item.bounds.size;
+          var length = vector.length / 10 * size.width / 10;
+          item.position += vector.normalize(length) + item.data.vector;
+          keepInView(item);
+        }
+      };
+    };
+
+    var moveRainbow = new function() {
+      var paths = [];
+      var colors = ['red', 'orange', 'yellow', 'lime', 'blue', 'purple'];
+      for (var i = 0; i < colors.length; i++) {
+        var path = new Path({
+          fillColor: colors[i]
+        });
+        paths.push(path);
+      }
+
+      var count = 30;
+      var group = new Group(paths);
+      var headGroup;
+      var eyePosition = new Point();
+      var eyeFollow = (Point.random() - 0.5);
+      var blinkTime = 200;
+      function createHead(vector, count) {
+        var eyeVector = (eyePosition - eyeFollow);
+        eyePosition -= eyeVector / 4;
+        if (eyeVector.length < 0.00001)
+          eyeFollow = (Point.random() - 0.5);
+        if (headGroup)
+          headGroup.remove();
+        var top = paths[0].lastSegment.point;
+        var bottom = paths[paths.length - 1].firstSegment.point;
+        var radius = (bottom - top).length / 2;
+        var circle = new Path.Circle({
+          center: top + (bottom - top) / 2,
+          radius: radius,
+          fillColor: 'black'
+        });
+        circle.scale(vector.length / 100, 1);
+        circle.rotate(vector.angle, circle.center);
+
+        innerCircle = circle.clone();
+        innerCircle.scale(0.5);
+        innerCircle.fillColor = (count % blinkTime < 3)
+          || (count % (blinkTime + 5) < 3) ? 'black' : 'white';
+        if (count % (blinkTime + 40) == 0)
+          blinkTime = Math.round(Math.random() * 40) + 200;
+        var eye = circle.clone();
+        eye.position += eyePosition * radius;
+        eye.scale(0.15, innerCircle.position);
+        eye.fillColor = 'black';
+        headGroup = new Group(circle, innerCircle, eye);
+      }
+
+      return function(vector, event) {
+        var vector = (view.center - position) / 10;
+
+        if (vector.length < 5)
+          vector.length = 5;
+        count += vector.length / 100;
+        group.translate(vector);
+        var rotated = vector.rotate(90);
+        var middle = paths.length / 2;
+        for (var j = 0; j < paths.length; j++) {
+          var path = paths[j];
+          var nyanSwing = playing ? Math.sin(event.count / 2) * vector.length : 1;
+          var unitLength = vector.length * (2 + Math.sin(event.count / 10)) / 2;
+          var length = (j - middle) * unitLength + nyanSwing;
+          var top = view.center + rotated.normalize(length);
+          var bottom = view.center + rotated.normalize(length + unitLength);
+          path.add(top);
+          path.insert(0, bottom);
+          if (path.segments.length > 200) {
+            var index = Math.round(path.segments.length / 2);
+            path.segments[index].remove();
+            path.segments[index - 1].remove();
+          }
+          path.smooth();
+        }
+        createHead(vector, event.count);
+        if (mediaElement)
+          mediaElement.setVolume(vector.length / 200);
       }
     }
-  },
 
-  getSidePoint: function(index) {
-    return this.point + this.sidePoints[index] * this.boundOffset[index];
-  },
-
-  updateBounds: function() {
-    for (var i = 0; i < this.numSegment; i ++)
-      this.boundOffset[i] = this.boundOffsetBuff[i];
-  }
-};
-
-//--------------------- main ---------------------
-
-var balls = [];
-var numBalls = 18;
-for (var i = 0; i < numBalls; i++) {
-  var position = Point.random() * view.size;
-  var vector = new Point({
-    angle: 360 * Math.random(),
-    length: Math.random() * 10
-  });
-  var radius = Math.random() * 60 + 60;
-  balls.push(new Ball(radius, position, vector));
-}
-
-function onFrame() {
-  for (var i = 0; i < balls.length - 1; i++) {
-    for (var j = i + 1; j < balls.length; j++) {
-      balls[i].react(balls[j]);
-    }
-  }
-  for (var i = 0, l = balls.length; i < l; i++) {
-    balls[i].iterate();
-  }
-}
-
-</script>
-
+    </script>
 
   </head>
 
 
   <body>
+  <ul class="navbar">
+    <li class="navitem"> <a href="page.html"> Go to Page </a> </li>
+    <li class="navitem"> <a href="another.html">Go to Another Page</a> </li>
+  </ul>
+
+    <div id="homepage">
+    <canvas id="myCanvas" resize="true"></canvas>
+    </div>
+
     <center>
-      <div class="test">
-       <canvas id="myCanvas" resize="true"></canvas>
-       </div>
+     
       <div id="text">
        <h1 style="color:red; font-size:50px; font-family: Impact;">This is Gautam's second website!</h1>
        <hr color="green" size="10px" width="75%" align="center">
-       <h2> I like to play basketball, code, and hang out with friends!!!!!xxxaaaaxxx!!!!!!!!!!<br><br><br></h2>
+       <h2 class="test"> I like to play basketball, code, and hang out with friends!!!!!xxxaaaaxxx!!!!!!!!!!<br><br><br></h2>
        <h3>Basketball</h3>
        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png" width="100" height="100">
-       <p>I have been playing basketball since I was in 1st grade. My favorite player is Klay Thompson!</p>
+       <p>I have been plfmnbfjhdsbfhjsdbhaying basketball since I was in 1st grade. My favorite player is Klay Thompson!</p>
        <img src="http://cdn1.bloguin.com/wp-content/uploads/sites/163/2016/05/534078340-645x356.jpg" width="75" height="75">
        <a href="page.html">Page</a>
        <a href="another.html">Another</a>

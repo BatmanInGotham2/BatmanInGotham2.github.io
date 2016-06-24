@@ -1,25 +1,69 @@
-.test{
-  width: 100%;
-  height: 100%;
-  z-index:0;
-  position: absolute;
+
+
+
+.navbar{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  background-color: #34495e;
+ 
+
 }
 
-#text{
-   position: relative;
-   top: -100%;
+
+.navitem 
+{
+  float:left; 
 }
-/* Extra code that you just need. */
+
+.navitem a
+{
+    display: inline;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+
+#homepage
+{
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+}
 
 html,
 body {
-    margin: 0;
-    overflow-y: scroll;
-    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    height: 100%;
 }
 
 /* Scale canvas with resize attribute to full size */
 canvas[resize] {
-    width: 100%;
-    height: 90%;
+    width: 100%;
+    height: 100%;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
