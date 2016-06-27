@@ -1,226 +1,144 @@
-<!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
-  <head>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="description" content="HTTrack is an easy-to-use website mirror utility. It allows you to download a World Wide website from the Internet to a local directory,building recursively all structures, getting html, images, and other files from the server to your computer. Links are rebuiltrelatively so that you can freely browse to the local site (works with any browser). You can mirror several sites together so that you can jump from one toanother. You can, also, update an existing mirror site, or resume an interrupted download. The robot is fully configurable, with an integrated help" />
+	<meta name="keywords" content="httrack, HTTRACK, HTTrack, winhttrack, WINHTTRACK, WinHTTrack, offline browser, web mirror utility, aspirateur web, surf offline, web capture, www mirror utility, browse offline, local  site builder, website mirroring, aspirateur www, internet grabber, capture de site web, internet tool, hors connexion, unix, dos, windows 95, windows 98, solaris, ibm580, AIX 4.0, HTS, HTGet, web aspirator, web aspirateur, libre, GPL, GNU, free software" />
+	<title>Local index - HTTrack Website Copier</title>
+  <!-- Mirror and index made by HTTrack Website Copier/3.48-21 [XR&CO'2014] -->
+	<style type="text/css">
+	<!--
 
-    <title>My first website</title>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css">
+body {
+	margin: 0;  padding: 0;  margin-bottom: 15px;  margin-top: 8px;
+	background: #77b;
+}
+body, td {
+	font: 14px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	}
 
-    <script type="text/javascript" src="assets/js/paper.js"></script>
-    <!-- Define inlined PaperScript associate it with myCanvas -->
-  <script type="text/paperscript" canvas="myCanvas">    
-    // A tribute to Nyan Cat http://www.youtube.com/watch?v=QH2-TGUlwu4
-    var mediaElement;
-    var playing = false;
-    MediaElement('nyan', {
-      pluginPath: '/assets/mediaelement/',
-      success: function(me) {
-        mediaElement = me;
-        me.play();
-        me.addEventListener('timeupdate', function(time) {
-          if (me.currentTime > 3.7)
-            playing = true;
-        });
-      }
-    });
+#subTitle {
+	background: #000;  color: #fff;  padding: 4px;  font-weight: bold; 
+	}
 
-    var mousePos = view.center + [view.bounds.width / 3, 100];
-    var position = view.center;
+#siteNavigation a, #siteNavigation .current {
+	font-weight: bold;  color: #448;
+	}
+#siteNavigation a:link    { text-decoration: none; }
+#siteNavigation a:visited { text-decoration: none; }
 
-    function onFrame(event) {
-      position += (mousePos - position) / 10;
-      var vector = (view.center - position) / 10;
-      moveStars(vector * 3);
-      moveRainbow(vector, event);
-    }
+#siteNavigation .current { background-color: #ccd; }
 
-    function onMouseMove(event) {
-      mousePos = event.point;
-    }
-
-    function onKeyDown(event) {
-      if (event.key == 'space')
-        project.activeLayer.selected = !project.activeLayer.selected;
-    }
-
-    var moveStars = new function() {
-      // The amount of symbol we want to place;
-      var count = 50;
-
-      // Create a symbol, which we will use to place instances of later:
-      var path = new Path.Circle({
-        center: [0, 0],
-        radius: 5,
-        fillColor: 'white',
-        strokeColor: 'black'
-      });
-
-      var symbol = new Symbol(path);
-
-      // Place the instances of the symbol:
-      for (var i = 0; i < count; i++) {
-        // The center position is a random point in the view:
-        var center = Point.random() * view.size;
-        var placed = symbol.place(center);
-        placed.scale(i / count + 0.01);
-        placed.data = {
-          vector: new Point({
-            angle: Math.random() * 360,
-            length : (i / count) * Math.random() / 5
-          })
-        };
-      }
-
-      var vector = new Point({
-        angle: 45,
-        length: 0
-      });
-
-      function keepInView(item) {
-        var position = item.position;
-        var viewBounds = view.bounds;
-        if (position.isInside(viewBounds))
-          return;
-        var itemBounds = item.bounds;
-        if (position.x > viewBounds.width + 5) {
-          position.x = -item.bounds.width;
-        }
-
-        if (position.x < -itemBounds.width - 5) {
-          position.x = viewBounds.width;
-        }
-
-        if (position.y > viewBounds.height + 5) {
-          position.y = -itemBounds.height;
-        }
-
-        if (position.y < -itemBounds.height - 5) {
-          position.y = viewBounds.height
-        }
-      }
-
-      return function(vector) {
-        // Run through the active layer's children list and change
-        // the position of the placed symbols:
-        var layer = project.activeLayer;
-        for (var i = 0; i < count; i++) {
-          var item = layer.children[i];
-          var size = item.bounds.size;
-          var length = vector.length / 10 * size.width / 10;
-          item.position += vector.normalize(length) + item.data.vector;
-          keepInView(item);
-        }
-      };
-    };
-
-    var moveRainbow = new function() {
-      var paths = [];
-      var colors = ['red', 'orange', 'yellow', 'lime', 'blue', 'purple'];
-      for (var i = 0; i < colors.length; i++) {
-        var path = new Path({
-          fillColor: colors[i]
-        });
-        paths.push(path);
-      }
-
-      var count = 30;
-      var group = new Group(paths);
-      var headGroup;
-      var eyePosition = new Point();
-      var eyeFollow = (Point.random() - 0.5);
-      var blinkTime = 200;
-      function createHead(vector, count) {
-        var eyeVector = (eyePosition - eyeFollow);
-        eyePosition -= eyeVector / 4;
-        if (eyeVector.length < 0.00001)
-          eyeFollow = (Point.random() - 0.5);
-        if (headGroup)
-          headGroup.remove();
-        var top = paths[0].lastSegment.point;
-        var bottom = paths[paths.length - 1].firstSegment.point;
-        var radius = (bottom - top).length / 2;
-        var circle = new Path.Circle({
-          center: top + (bottom - top) / 2,
-          radius: radius,
-          fillColor: 'black'
-        });
-        circle.scale(vector.length / 100, 1);
-        circle.rotate(vector.angle, circle.center);
-
-        innerCircle = circle.clone();
-        innerCircle.scale(0.5);
-        innerCircle.fillColor = (count % blinkTime < 3)
-          || (count % (blinkTime + 5) < 3) ? 'black' : 'white';
-        if (count % (blinkTime + 40) == 0)
-          blinkTime = Math.round(Math.random() * 40) + 200;
-        var eye = circle.clone();
-        eye.position += eyePosition * radius;
-        eye.scale(0.15, innerCircle.position);
-        eye.fillColor = 'black';
-        headGroup = new Group(circle, innerCircle, eye);
-      }
-
-      return function(vector, event) {
-        var vector = (view.center - position) / 10;
-
-        if (vector.length < 5)
-          vector.length = 5;
-        count += vector.length / 100;
-        group.translate(vector);
-        var rotated = vector.rotate(90);
-        var middle = paths.length / 2;
-        for (var j = 0; j < paths.length; j++) {
-          var path = paths[j];
-          var nyanSwing = playing ? Math.sin(event.count / 2) * vector.length : 1;
-          var unitLength = vector.length * (2 + Math.sin(event.count / 10)) / 2;
-          var length = (j - middle) * unitLength + nyanSwing;
-          var top = view.center + rotated.normalize(length);
-          var bottom = view.center + rotated.normalize(length + unitLength);
-          path.add(top);
-          path.insert(0, bottom);
-          if (path.segments.length > 200) {
-            var index = Math.round(path.segments.length / 2);
-            path.segments[index].remove();
-            path.segments[index - 1].remove();
-          }
-          path.smooth();
-        }
-        createHead(vector, event.count);
-        if (mediaElement)
-          mediaElement.setVolume(vector.length / 200);
-      }
-    }
-
-    </script>
-
-  </head>
+#siteNavigation a:hover   { text-decoration: none;  background-color: #fff;  color: #000; }
+#siteNavigation a:active  { text-decoration: none;  background-color: #ccc; }
 
 
-  <body>
-  <ul class="navbar">
-    <li class="navitem"> <a href="page.html"> Go to Page </a> </li>
-    <li class="navitem"> <a href="another.html">Go to Another Page</a> </li>
-  </ul>
+a:link    { text-decoration: underline;  color: #00f; }
+a:visited { text-decoration: underline;  color: #000; }
+a:hover   { text-decoration: underline;  color: #c00; }
+a:active  { text-decoration: underline; }
 
-    <div id="homepage">
-    <canvas id="myCanvas" resize="true"></canvas>
-    </div>
+#pageContent {
+	clear: both;
+	border-bottom: 6px solid #000;
+	padding: 10px;  padding-top: 20px;
+	line-height: 1.65em;
+	background-image: url(backblue.gif);
+	background-repeat: no-repeat;
+	background-position: top right;
+	}
 
-    <center>
-     
-      <div id="text">
-       <h1 style="color:red; font-size:50px; font-family: Impact;">This is Gautam's second website!</h1>
-       <hr color="green" size="10px" width="75%" align="center">
-       <h2 class="test"> I like to play basketball, code, and hang out with friends!!!!!xxxaaaaxxx!!!!!!!!!!<br><br><br></h2>
-       <h3>Basketball</h3>
-       <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png" width="100" height="100">
-       <p>I have been plfmnbfjhdsbfhjsdbhaying basketball since I was in 1st grade. My favorite player is Klay Thompson!</p>
-       <img src="http://cdn1.bloguin.com/wp-content/uploads/sites/163/2016/05/534078340-645x356.jpg" width="75" height="75">
-       <a href="page.html">Page</a>
-       <a href="another.html">Another</a>
-      </div>
-    </center>
-  </body>
+#pageContent, #siteNavigation {
+	background-color: #ccd;
+	}
+
+
+.imgLeft  { float: left;   margin-right: 10px;  margin-bottom: 10px; }
+.imgRight { float: right;  margin-left: 10px;   margin-bottom: 10px; }
+
+hr { height: 1px;  color: #000;  background-color: #000;  margin-bottom: 15px; }
+
+h1 { margin: 0;  font-weight: bold;  font-size: 2em; }
+h2 { margin: 0;  font-weight: bold;  font-size: 1.6em; }
+h3 { margin: 0;  font-weight: bold;  font-size: 1.3em; }
+h4 { margin: 0;  font-weight: bold;  font-size: 1.18em; }
+
+.blak { background-color: #000; }
+.hide { display: none; }
+.tableWidth { min-width: 400px; }
+
+.tblRegular       { border-collapse: collapse; }
+.tblRegular td    { padding: 6px;  background-image: url(fade.gif);  border: 2px solid #99c; }
+.tblHeaderColor, .tblHeaderColor td { background: #99c; }
+.tblNoBorder td   { border: 0; }
+
+
+// -->
+</style>
+
+</head>
+
+<table width="76%" border="0" align="center" cellspacing="0" cellpadding="3" class="tableWidth">
+	<tr>
+	<td id="subTitle">HTTrack Website Copier - Open Source offline browser</td>
+	</tr>
+</table>
+<table width="76%" border="0" align="center" cellspacing="0" cellpadding="0" class="tableWidth">
+<tr class="blak">
+<td>
+	<table width="100%" border="0" align="center" cellspacing="1" cellpadding="0">
+	<tr>
+	<td colspan="6"> 
+		<table width="100%" border="0" align="center" cellspacing="0" cellpadding="10">
+		<tr> 
+		<td id="pageContent"> 
+<!-- ==================== End prologue ==================== -->
+
+	<meta name="generator" content="HTTrack Website Copier/3.x">
+	<TITLE>Local index - HTTrack</TITLE>
+</HEAD>
+<BODY>
+<H1 ALIGN=Center>Index of locally available sites:</H1>
+	<TABLE BORDER="0" WIDTH="100%" CELLSPACING="1" CELLPADDING="0">
+		<TR>
+			<TD BACKGROUND="fade.gif">
+				&middot;
+					<A HREF="www.rodesk.com/index.html">
+						User Experience Design Agency | Rodesk | User Experience Expertise
+					</A>		
+			</TD>
+		</TR>
+	</TABLE>
+	<BR>
+	<BR>
+	<BR>
+  	<H6 ALIGN="RIGHT">
+	<I>Mirror and index made by HTTrack Website Copier [XR&amp;CO'2008]</I>
+	</H6>
+	<!-- Mirror and index made by HTTrack Website Copier/3.48-21 [XR&CO'2014] -->
+	<!-- Thanks for using HTTrack Website Copier! -->
+	<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=www.rodesk.com/index.html">
+
+
+<!-- ==================== Start epilogue ==================== -->
+		</td>
+		</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+</table>
+
+<table width="76%" border="0" align="center" valign="bottom" cellspacing="0" cellpadding="0">
+	<tr>
+	<td id="footer"><small>&copy; 2008 Xavier Roche & other contributors - Web Design: Leto Kauler.</small></td>
+	</tr>
+</table>
+
+</body>
+
 </html>
 
 
