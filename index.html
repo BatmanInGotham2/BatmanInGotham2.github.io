@@ -2,8 +2,126 @@
   <head>
     <title>Hi</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="animate.css" />
+    <script src="jquery-3.2.1.js"></script>
+
+
+    <script>
+    function animateElement(element, animation){
+      element = $(element);
+      element.addClass('animated ' + animation);
+      window.setTimeout( function(){
+      element.removeClass('animated ' + animation);
+    }, 2000);
+    }
+
+    function animationClick(element, animation){
+      element = $(element);
+      element.click(
+          function() {
+              element.addClass('animated ' + animation);
+              window.setTimeout( function(){
+              element.removeClass('animated ' + animation);
+            }, 2000);
+          });
+    }
+
+    function animationHover(element, animation){
+      element = $(element);
+      element.hover(
+    function() {
+      element.addClass('animated ' + animation);
+      },
+    function(){
+      window.setTimeout( function(){
+        element.removeClass('animated ' + animation);
+      }, 2000);
+      });
+      }
+
+      function animationHover(element, animation, animation2){
+        element = $(element);
+        element.hover(
+      function() {
+        element.addClass('animated ' + animation);
+        //window.setTimeout( function(){
+
+        //}, 2000);
+        setTimeout(function() {
+          element.removeClass('animated ' +animation);
+            element.addClass('animated ' + animation2);
+        }, 2000);
+
+        },
+      function(){
+        window.setTimeout( function(){
+          element.removeClass('animated ' +animation2);
+        }, 2000);
+
+
+
+        });
+        }
+
+        function animationClick(element, animation, animation2){
+          element = $(element);
+          element.click(
+        function() {
+          element.addClass('animated ' + animation);
+          //window.setTimeout( function(){
+
+          //}, 2000);
+          setTimeout(function() {
+            element.removeClass('animated ' +animation);
+              element.addClass('animated ' + animation2);
+          }, 2000);
+
+          },
+        function(){
+          window.setTimeout( function(){
+            element.removeClass('animated ' +animation2);
+          }, 2000);
+
+
+
+          });
+          }
+
+
+
+    $(document).ready(function(){
+
+
+    $('#logo').each(function() {
+    animationHover(this, 'rollOut', 'rollIn');
+    });
+
+
+    });
+
+
+
+
+    </script>
+
+
   </head>
   <body>
+
+
+  <img src="http://a.espncdn.com/combiner/i?img=/redesign/assets/img/icons/ESPN-icon-basketball.png&w=288&h=288&transparent=trueE" id="logo"></img>
+
+
+
+
+
+
+
+
+
+
+
+
 
     <p>
 
@@ -32,11 +150,64 @@
             });<br>
     }<br>
 
+    function animationHover(element, animation, animation2){<br>
+      element = $(element);<br>
+      element.hover(<br>
+    function() {<br>
+      element.addClass('animated ' + animation);<br>
+  <br><br>
+      setTimeout(function() {<br>
+        element.removeClass('animated ' +animation);<br>
+          element.addClass('animated ' + animation2);<br>
+      }, 2000);<br>
+
+      },<br>
+    function(){<br>
+      window.setTimeout( function(){<br>
+        element.removeClass('animated ' +animation2);<br>
+      }, 2000);<br>
+<br><br><br>
+
+
+      });<br>
+      }<br>
+
+      function animationClick(element, animation, animation2){<br>
+        element = $(element);<br>
+        element.click(<br>
+      function() {<br>
+        element.addClass('animated ' + animation);<br>
+<br><br>
+        setTimeout(function() {<br>
+          element.removeClass('animated ' +animation);<br>
+            element.addClass('animated ' + animation2);<br>
+        }, 2000);<br>
+<br><br>
+        },<br>
+      function(){<br>
+        window.setTimeout( function(){<br>
+          element.removeClass('animated ' +animation2);<br>
+        }, 2000);<br>
+<br><br>
+
+
+        });<br>
+        }<br>
+
+
+
     $(document).ready(function(){<br>
         $('#logo').each(function() {<br>
             animationHover(this, 'bounce');<br>
         });<br>
     });<br>
     </p>
+
+
+
+
+
+
+
   </body>
 </html>
