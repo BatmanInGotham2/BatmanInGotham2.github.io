@@ -8,37 +8,35 @@
     <p>
 
 
-    function animationClick(element, animation){
-        element = $(element);
-        element.click(
-            function() {
-                element.addClass('animated ' + animation);
-                //wait for animation to finish before removing classes
-                window.setTimeout( function(){
-                    element.removeClass('animated ' + animation);
-                }, 2000);
+    function animationClick(element, animation){<br>
+        element = $(element);<br>
+        element.click(<br>
+            function() {<br>
+                element.addClass('animated ' + animation);<br>
+                window.setTimeout( function(){<br>
+                    element.removeClass('animated ' + animation);<br>
+                }, 2000);<br>
 
-            });
-    }
-    function animationHover(element, animation){
-        element = $(element);
-        element.hover(
-            function() {
-                element.addClass('animated ' + animation);
-            },
-            function(){
-                //wait for animation to finish before removing classes
-                window.setTimeout( function(){
-                    element.removeClass('animated ' + animation);
-                }, 2000);
-            });
-    }
+            });<br>
+    }<br>
+    function animationHover(element, animation){<br>
+        element = $(element);<br>
+        element.hover(<br>
+            function() {<br>
+                element.addClass('animated ' + animation);<br>
+            },<br>
+            function(){<br>
+                window.setTimeout( function(){<br>
+                    element.removeClass('animated ' + animation);<br>
+                }, 2000);<br>
+            });<br>
+    }<br>
 
-    $(document).ready(function(){
-        $('#logo').each(function() {
-            animationHover(this, 'bounce');
-        });
-    });
+    $(document).ready(function(){<br>
+        $('#logo').each(function() {<br>
+            animationHover(this, 'bounce');<br>
+        });<br>
+    });<br>
     </p>
   </body>
 </html>
