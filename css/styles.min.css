@@ -2205,7 +2205,6 @@ html.svg #connect-section .locations h2.is-visible .letter {
     height: 36px;
     margin: 60px auto 0;
     z-index: 1;
-    cursor: pointer;
     opacity: 0;
     border: 9px solid #12171d;
     border-radius: 50%;
